@@ -1,0 +1,58 @@
+:root {
+    --background-color-light: #f0f0f0; /* Un gris claro en lugar de blanco puro */
+    --text-color-light: #000000;
+    --background-color-dark: #000000;
+    --text-color-dark: #ffffff;
+  }
+  
+  body.light-theme {
+    background-color: var(--background-color-light);
+    color: var(--text-color-light);
+  }
+  
+  body.dark-theme {
+    background-color: var(--background-color-dark);
+    color: var(--text-color-dark);
+  }
+  
+  header {
+    text-align: center;
+    font-size: 24px;
+  }
+  
+  .playlist-name {
+    white-space: normal; /* Permitir que el texto se ajuste */
+    overflow: visible; /* Mostrar todo el texto */
+    text-overflow: clip; /* No recortar el texto */
+    width: 100%; /* Asegurarse de que el texto ocupe todo el ancho disponible */
+    font-size: 18px; /* Mantener el tamaño de la fuente */
+  }
+  
+  body, code {
+    font-family: 'Consolas'; /* Asegúrate de usar 'font-family' en lugar de 'font' */
+  }
+  
+  .scroll-top-button,
+.scroll-bottom-button {
+  position: fixed;
+  bottom: 20px; /* Ajusta la posición desde el borde inferior */
+  padding: 10px;
+  font-size: 2.5rem; /* Tamaño del icono */
+  z-index: 1000; /* Asegura que estén por encima de otros elementos */
+}
+
+.scroll-top-button {
+  right: 20px; /* Alinea a la derecha */
+}
+
+.scroll-bottom-button {
+  right: 20px; /* Alinea a la derecha */
+}
+
+.scroll-top-button:hover,
+.scroll-bottom-button:hover {
+  background-color: #0056b3; /* Cambia el color de fondo al pasar el mouse */
+}
+
+  
+  

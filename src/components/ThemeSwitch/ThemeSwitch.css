@@ -1,0 +1,17 @@
+/* Estilo del contenedor del switch */
+.theme-switch {
+    display: inline-block;
+  }
+  
+  /* Estilo del contenedor del ícono */
+  .icon-container {
+    cursor: pointer;
+    font-size: 24px; /* Tamaño del ícono */
+    color: #888; /* Color del ícono */
+    transition: color 0.3s ease; /* Transición de color */
+  }
+  
+  .icon-container:hover {
+    color: #555; /* Cambia el color del ícono al pasar el ratón */
+  }
+  
