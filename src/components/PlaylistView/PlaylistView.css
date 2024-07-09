@@ -1,100 +1,99 @@
 .playlist-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(calc(20% - 20px), 1fr)); /* Ajuste para hasta cinco columnas por fila */
-    gap: 20px;
-    padding: 20px;
-    justify-content: center; /* Centra las columnas */
-  }
-  
-  @media (max-width: 1200px) {
-    .playlist-grid {
-      grid-template-columns: repeat(auto-fill, minmax(calc(25% - 20px), 1fr)); /* Hasta cuatro columnas por fila en pantallas medianas */
-    }
-  }
-  
-  @media (max-width: 992px) {
-    .playlist-grid {
-      grid-template-columns: repeat(auto-fill, minmax(calc(33.33% - 20px), 1fr)); /* Hasta tres columnas por fila en tabletas */
-    }
-  }
-  
-  @media (max-width: 768px) {
-    .playlist-grid {
-      grid-template-columns: repeat(auto-fill, minmax(calc(50% - 20px), 1fr)); /* Hasta dos columnas por fila en dispositivos móviles */
-    }
-  }
-  
-  .playlist-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    padding: 20px;
-    transition: background-color 0.3s;
-    cursor: pointer;
-  }
-  
-  .playlist-item:hover {
-    background-color: #333;
-    color: #fff;
-  }
-  
-  .playlist-name {
-    text-align: center;
-    margin-top: 10px;
-    font-size: 16px;
-    font-weight: bold;
-    white-space: normal;
-    word-wrap: break-word;
-    overflow: visible;
-    width: 100%;
-  }
-  
-  .playlist-image img {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-  
-  .playlist-duration {
-    text-align: center;
-    font-size: 14px;
-  }
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(calc(20% - 20px), 1fr)); /* Ajuste para hasta cinco columnas por fila */
+  gap: 20px;
+  padding: 20px;
+  justify-content: center; /* Centra las columnas */
+}
 
-  .playlist-item.listened {
-    background-color: #1DB954 !important;
-    color: #fff;
+@media (max-width: 1200px) {
+  .playlist-grid {
+    grid-template-columns: repeat(auto-fill, minmax(calc(25% - 20px), 1fr)); /* Hasta cuatro columnas por fila en pantallas medianas */
   }
-  
-  
-  /* Tema claro */
-  body.light-theme .playlist-item {
-    background-color: #f9f9f9;
-    color: #333;
-    transition: background-color 0.3s;
+}
+
+@media (max-width: 992px) {
+  .playlist-grid {
+    grid-template-columns: repeat(auto-fill, minmax(calc(33.33% - 20px), 1fr)); /* Hasta tres columnas por fila en tabletas */
   }
-  
-  body.light-theme .playlist-item:hover {
-    background-color: #000;
-    color: #fff;
+}
+
+@media (max-width: 768px) {
+  .playlist-grid {
+    grid-template-columns: repeat(auto-fill, minmax(calc(50% - 20px), 1fr)); /* Hasta dos columnas por fila en dispositivos móviles */
   }
-  
-  /* Tema oscuro */
-  body.dark-theme .playlist-item {
-    background-color: #333;
-    color: #fff;
-    transition: background-color 0.3s;
-  }
-  
-  body.dark-theme .playlist-item:hover {
-    background-color: #fff;
-    color: #000;
-  }
-  
-  /* Añadir clase para la animación */
-  .animate-reverse .playlist-item {
-    animation: fadeOutIn 0.5s ease-in-out;
-    pointer-events: none;
-  }
-  
+}
+
+.playlist-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 20px;
+  transition: background-color 0.3s;
+  cursor: pointer;
+}
+
+.playlist-item:hover {
+  background-color: #333;
+  color: #fff;
+}
+
+.playlist-name {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow: visible;
+  width: 100%;
+}
+
+.playlist-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.playlist-duration {
+  text-align: center;
+  font-size: 14px;
+}
+
+.playlist-item.listened {
+  background-color: #1DB954 !important;
+  color: #fff;
+}
+
+
+/* Tema claro */
+body.light-theme .playlist-item {
+  background-color: #f9f9f9;
+  color: #333;
+  transition: background-color 0.3s;
+}
+
+body.light-theme .playlist-item:hover {
+  background-color: #000;
+  color: #fff;
+}
+
+/* Tema oscuro */
+body.dark-theme .playlist-item {
+  background-color: #333;
+  color: #fff;
+  transition: background-color 0.3s;
+}
+
+body.dark-theme .playlist-item:hover {
+  background-color: #fff;
+  color: #000;
+}
+
+/* Añadir clase para la animación */
+.animate-reverse .playlist-item {
+  animation: fadeOutIn 0.5s ease-in-out;
+  pointer-events: none;
+}

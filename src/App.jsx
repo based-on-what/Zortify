@@ -127,14 +127,14 @@ const App = () => {
       <header className={`App-header ${theme}-theme`}>
         <div className="container">
           <div className="row">
-            <div className="col-md-6">
-              <h1>Welcome to Sortify</h1>
-              <p>Sortify is an app that allows you to sort your Spotify playlists.</p>
-              <button className="btn btn-primary btn-lg" onClick={invertPlaylists}>Reverse Playlists</button>
-              {isLoggedIn && (
-                <Link to="/" className="btn btn-secondary btn-lg">Sort Playlists</Link>
-              )}
-            </div>
+          <div className="col-md-6 d-flex align-items-center justify-content-center">
+  <div className="text-center">
+    <h1>Welcome to Sortify</h1>
+    <p>Sortify is an app that allows you to sort your Spotify playlists.</p>
+    <button className="btn btn-primary btn-lg" onClick={invertPlaylists}>Reverse Playlists</button>
+  </div>
+</div>
+
             <div className="col-md-6 d-flex justify-content-end align-items-center">
               {showScrollTopButton && (
                 <button className="btn btn-primary scroll-top-button" onClick={scrollToTop}>
@@ -156,8 +156,8 @@ const App = () => {
       <div className="container">
         <Routes>
           <Route path="/" element={<PlaylistView playlists={playlists} isAnimating={isAnimating} />} />
-          <Route path="/Sortify" element={<PlaylistView playlists={playlists} isAnimating={isAnimating} />} />
-          <Route path="/Sortify/callback" element={<div>Loading...</div>} /> {/* Ruta para manejar el callback */}
+          <Route path="/Zortify" element={<PlaylistView playlists={playlists} isAnimating={isAnimating} />} />
+          <Route path="/Zortify/callback" element={<div>Loading...</div>} /> {/* Ruta para manejar el callback */}
         </Routes>
       </div>
     </div>

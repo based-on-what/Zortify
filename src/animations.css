@@ -1,12 +1,11 @@
 /* animations.css */
 @keyframes fadeOutIn {
-    0% { opacity: 1; }
-    50% { opacity: 0; }
-    100% { opacity: 1; }
-  }
-  
-  .animate-reverse .playlist-item {
-    animation: fadeOutIn 1s ease-in-out;
-    pointer-events: none; /* Desactiva interacciones durante la animación */
-  }
-  
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.animate-reverse .playlist-item {
+  animation: fadeOutIn 1s ease-in-out;
+  pointer-events: none; /* Desactiva interacciones durante la animación */
+}
