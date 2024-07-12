@@ -97,3 +97,19 @@ body.dark-theme .playlist-item:hover {
   animation: fadeOutIn 0.5s ease-in-out;
   pointer-events: none;
 }
+
+@keyframes rowPopIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.row-animation {
+  animation: rowPopIn 0.5s ease;
+}
+
