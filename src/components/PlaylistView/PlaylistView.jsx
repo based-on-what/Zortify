@@ -13,8 +13,6 @@ const updateResults = (updatedResults) => {
 };
 
 const PlaylistView = ({ playlists, searchTerm = '', isAnimating }) => {
-  const [visiblePlaylists, setVisiblePlaylists] = useState(30);
-  const [isLoading, setIsLoading] = useState(false);
   const [listenedMap, setListenedMap] = useState({});
 
   // Cargar listenedMap desde localStorage al iniciar el componente
@@ -28,7 +26,6 @@ const PlaylistView = ({ playlists, searchTerm = '', isAnimating }) => {
       });
       setListenedMap(initialListenedMap);
     } else {
-      // Inicializar listenedMap si no hay datos en localStorage
       const initialListenedMap = {};
       playlists.forEach(playlist => {
         initialListenedMap[playlist.url] = false;
@@ -37,25 +34,15 @@ const PlaylistView = ({ playlists, searchTerm = '', isAnimating }) => {
     }
   }, [playlists]);
 
-  const loadMorePlaylists = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setVisiblePlaylists((prev) => prev + 30);
-      setIsLoading(false);
-    }, 500);
-  };
-
   const toggleListened = (playlistUrl) => {
     setListenedMap((prevMap) => {
       const newMap = { ...prevMap, [playlistUrl]: !prevMap[playlistUrl] };
-
       const updatedResults = { ...results };
       const playlistKey = Object.keys(updatedResults).find(key => updatedResults[key].url === playlistUrl);
       if (playlistKey) {
         updatedResults[playlistKey].listened = newMap[playlistUrl];
         updateResults(updatedResults);
       }
-
       return newMap;
     });
   };
@@ -70,7 +57,7 @@ const PlaylistView = ({ playlists, searchTerm = '', isAnimating }) => {
 
   return (
     <div className={`playlist-grid ${isAnimating ? 'animate-reverse' : ''}`}>
-      {filteredPlaylists.slice(0, visiblePlaylists).map((playlist) => {
+      {filteredPlaylists.map((playlist) => {
         const playlistUrl = playlist.url;
         const isSelected = listenedMap[playlistUrl];
 
@@ -102,13 +89,6 @@ const PlaylistView = ({ playlists, searchTerm = '', isAnimating }) => {
           </div>
         );
       })}
-      {isLoading && (
-        <div className="d-flex justify-content-center">
-          <div className="spinner-border" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
