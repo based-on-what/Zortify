@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './PlaylistView.css';
-import '../../theme.css'; // Importa tu archivo de estilos
+import '../../theme.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import results from '../../results.json';
 
@@ -13,31 +13,29 @@ const updateResults = (updatedResults) => {
 };
 
 const PlaylistView = ({ playlists, searchTerm = '', isAnimating }) => {
-  const [listenedMap, setListenedMap] = useState(() => {
-    const savedResults = localStorage.getItem('results');
-    const initialResults = savedResults ? JSON.parse(savedResults) : results;
-
-    const initialListenedMap = {};
-    Object.keys(initialResults).forEach((key) => {
-      initialListenedMap[initialResults[key].url] = initialResults[key].listened || false;
-    });
-
-    return initialListenedMap;
-  });
-
   const [visiblePlaylists, setVisiblePlaylists] = useState(30);
   const [isLoading, setIsLoading] = useState(false);
+  const [listenedMap, setListenedMap] = useState({});
 
+  // Cargar listenedMap desde localStorage al iniciar el componente
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500 && !isLoading) {
-        loadMorePlaylists();
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [isLoading]);
+    const savedResults = localStorage.getItem('results');
+    if (savedResults) {
+      const initialResults = JSON.parse(savedResults);
+      const initialListenedMap = {};
+      Object.keys(initialResults).forEach((key) => {
+        initialListenedMap[initialResults[key].url] = initialResults[key].listened || false;
+      });
+      setListenedMap(initialListenedMap);
+    } else {
+      // Inicializar listenedMap si no hay datos en localStorage
+      const initialListenedMap = {};
+      playlists.forEach(playlist => {
+        initialListenedMap[playlist.url] = false;
+      });
+      setListenedMap(initialListenedMap);
+    }
+  }, [playlists]);
 
   const loadMorePlaylists = () => {
     setIsLoading(true);
@@ -51,12 +49,11 @@ const PlaylistView = ({ playlists, searchTerm = '', isAnimating }) => {
     setListenedMap((prevMap) => {
       const newMap = { ...prevMap, [playlistUrl]: !prevMap[playlistUrl] };
 
-      // Actualizar results
-      const updatedResults = { ...results }; // Copia de los resultados originales
+      const updatedResults = { ...results };
       const playlistKey = Object.keys(updatedResults).find(key => updatedResults[key].url === playlistUrl);
       if (playlistKey) {
         updatedResults[playlistKey].listened = newMap[playlistUrl];
-        updateResults(updatedResults); // Guarda los cambios en localStorage
+        updateResults(updatedResults);
       }
 
       return newMap;
@@ -64,7 +61,7 @@ const PlaylistView = ({ playlists, searchTerm = '', isAnimating }) => {
   };
 
   const handleCheckboxClick = (event) => {
-    event.stopPropagation(); // Detener la propagación del evento para evitar que llegue al div padre
+    event.stopPropagation();
   };
 
   const filteredPlaylists = playlists.filter((playlist) =>
@@ -74,14 +71,14 @@ const PlaylistView = ({ playlists, searchTerm = '', isAnimating }) => {
   return (
     <div className={`playlist-grid ${isAnimating ? 'animate-reverse' : ''}`}>
       {filteredPlaylists.slice(0, visiblePlaylists).map((playlist) => {
-        const playlistUrl = playlist.url; // Usar la URL de la playlist como clave
-        const isSelected = listenedMap[playlistUrl]; // Verifica si está seleccionada
+        const playlistUrl = playlist.url;
+        const isSelected = listenedMap[playlistUrl];
 
         return (
           <div 
             key={playlistUrl} 
             className={`playlist-item border ${isSelected ? 'listened' : ''} row-animation`} 
-            style={{ cursor: 'pointer', backgroundColor: isSelected ? '#d3f9d8' : 'transparent' }} // Cambiar el fondo si está seleccionada
+            style={{ cursor: 'pointer', backgroundColor: isSelected ? '#d3f9d8' : 'transparent' }}
             onClick={() => handlePlaylistClick(playlist.url)}
           >
             <div className="playlist-image">
