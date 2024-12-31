@@ -5,5 +5,8 @@ import { viteCommonjs } from '@originjs/vite-plugin-commonjs'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), viteCommonjs()],
-  base: '/Zortify/'
+  base: '/Zortify/',
+  build: {
+    sourcemap: true,
+  }
 })

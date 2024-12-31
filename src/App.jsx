@@ -17,19 +17,22 @@ const App = () => {
   const [showScrollTopButton, setShowScrollTopButton] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('all');
-  const [listenedMap, setListenedMap] = useState([]);
+  const [listenedMap, setListenedMap] = useState({});
   const [reversed, setReversed] = useState(false);
 
+  // Inicializa los datos de playlists y listenedMap
   useEffect(() => {
+    const playlistsArray = Object.keys(resultsData).map((key) => {
+      const playlist = { name: key, ...resultsData[key] };
+      if (playlist.url) return playlist;
+      console.warn(`Playlist "${key}" no tiene una URL válida`, playlist);
+      return null;
+    }).filter(Boolean); // Filtra valores nulos
+
     const savedOrder = localStorage.getItem('playlistsOrder');
-    const playlistsArray = Object.keys(resultsData).map((key) => ({
-      name: key,
-      ...resultsData[key],
-    }));
-    
     if (savedOrder) {
       const order = JSON.parse(savedOrder);
-      const orderedPlaylists = order.map(url => playlistsArray.find(p => p.url === url));
+      const orderedPlaylists = order.map(url => playlistsArray.find(p => p.url === url)).filter(Boolean);
       setPlaylists(orderedPlaylists);
     } else {
       setPlaylists(playlistsArray);
@@ -39,17 +42,23 @@ const App = () => {
     const initialListenedMap = {};
     if (savedResults) {
       const initialResults = JSON.parse(savedResults);
-      Object.keys(initialResults).forEach(key => {
-        initialListenedMap[initialResults[key].url] = initialResults[key].listened || false;
+      Object.keys(initialResults).forEach((key) => {
+        const { url, listened } = initialResults[key];
+        if (url) {
+          initialListenedMap[url] = listened || false;
+        }
       });
     } else {
-      playlistsArray.forEach(playlist => {
-        initialListenedMap[playlist.url] = false;
+      playlistsArray.forEach((playlist) => {
+        if (playlist.url) {
+          initialListenedMap[playlist.url] = false;
+        }
       });
     }
     setListenedMap(initialListenedMap);
   }, [location.hash]);
 
+  // Actualiza el tema
   useEffect(() => {
     document.body.classList.add(`${theme}-theme`);
     return () => {
@@ -57,10 +66,10 @@ const App = () => {
     };
   }, [theme]);
 
+  // Maneja el botón de scroll hacia arriba
   useEffect(() => {
     const handleScroll = () => {
-      const scrollY = window.scrollY;
-      setShowScrollTopButton(scrollY > 200);
+      setShowScrollTopButton(window.scrollY > 200);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -69,6 +78,7 @@ const App = () => {
     };
   }, []);
 
+  // Invierte la lista de playlists
   const handleReversePlaylists = () => {
     const newPlaylists = [...playlists].reverse();
     setPlaylists(newPlaylists);
@@ -76,7 +86,12 @@ const App = () => {
     setReversed(!reversed);
   };
 
-  const filteredPlaylists = playlists.filter(playlist => {
+  // Filtra las playlists
+  const filteredPlaylists = playlists.filter((playlist) => {
+    if (!playlist || !playlist.url) {
+      console.warn('Objeto de playlist inválido encontrado:', playlist);
+      return false;
+    }
     const isSelected = listenedMap[playlist.url];
     if (filter === 'selected') {
       return isSelected;
@@ -84,7 +99,7 @@ const App = () => {
       return !isSelected;
     }
     return true;
-  }).filter(playlist =>
+  }).filter((playlist) =>
     playlist.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -109,7 +124,6 @@ const App = () => {
       <div className="container">
         <Routes>
           <Route path="/" element={<PlaylistView playlists={filteredPlaylists} isAnimating={isAnimating} listenedMap={listenedMap} setListenedMap={setListenedMap} />} />
-          <Route path="/Zortify" element={<PlaylistView playlists={filteredPlaylists} isAnimating={isAnimating} listenedMap={listenedMap} setListenedMap={setListenedMap} />} />
         </Routes>
       </div>
       {showScrollTopButton && (
@@ -123,7 +137,7 @@ const App = () => {
 
 const AppWrapper = () => (
   <ThemeProvider>
-    <Router>
+    <Router basename="/Zortify">
       <App />
     </Router>
   </ThemeProvider>

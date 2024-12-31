@@ -46,7 +46,7 @@ def load_config():
         "TIMEOUT": 30  # Tiempo máximo permitido para procesar una playlist
     }
 CONFIG = load_config()
-
+#
 # Inicialización de Spotify
 auth_manager = SpotifyOAuth(
     client_id=os.getenv('SPOTIPY_CLIENT_ID'),
