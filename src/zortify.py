@@ -192,89 +192,87 @@ def get_playlist_tracks(playlist: Dict) -> Optional[Dict]:
     """
     Obtiene todos los tracks de una playlist, filtrando podcasts desde el inicio
     """
-    global all_results  # Usar el diccionario global
     try:
         current_progress['last_playlist'] = playlist['name']
         logger.info("=" * 50)
         logger.info(f"🎵 Iniciando procesamiento de playlist: {playlist['name']}")
         
-        start_time = time.time()  # Tiempo de inicio para la playlist
         total_duration_ms = 0
         offset = 0
         tracks_processed = 0
-        podcasts_found = 0
+        invalid_tracks = 0  # Contador para tracks no válidos (podcasts + no reproducibles)
         total_tracks = playlist['tracks']['total']
         logger.info(f"📝 Playlist: {total_tracks} tracks totales")
-        
-        has_processed_any_track = False
-        last_progress_time = time.time()  # Tiempo de la última actualización de progreso
 
-        while tracks_processed + podcasts_found < total_tracks:
-            batch_start_time = time.time()  # Tiempo de inicio del lote
+        while offset < total_tracks:
             batch = get_playlist_tracks_batch(playlist['id'], offset)
             if not batch:
                 logger.warning("⚠️ No se pudo obtener el lote")
                 break
 
-            # Filtrar los podcasts y tracks no reproducibles antes del procesamiento
-            valid_tracks = []
             for item in batch['items']:
                 track = item.get('track')
                 if not track:
-                    logger.info(f"🚫 Elemento no es un track: {item.get('name', 'Desconocido')}")
+                    invalid_tracks += 1
                     continue
 
-                # Verificar si es un podcast
-                if track['type'] == 'episode':
-                    logger.info(f"🎙️ Saltando podcast: {track.get('name', 'Desconocido')}")
+                # Verificar si es un podcast o no es reproducible
+                if track['type'] == 'episode' or not track.get('is_playable', True):
+                    invalid_tracks += 1
+                    logger.debug(f"⏭️ Saltando track no válido: {track.get('name', 'Desconocido')} ({track['type']})")
                     continue
 
-                if not track.get('is_playable', True):
-                    logger.warning(f"❌ Canción no disponible: {track.get('name', 'Desconocido')}")
-                    continue  # Saltar si la canción no es reproducible
-
-                valid_tracks.append(track)
-
-            # Procesar solo los tracks válidos
-            for track in valid_tracks:
                 total_duration_ms += track['duration_ms']
                 tracks_processed += 1
-                has_processed_any_track = True
-                last_progress_time = time.time()  # Actualizar el tiempo de progreso
 
-                if tracks_processed % 10 == 0:
-                    logger.info(f"⏳ Procesando... {tracks_processed} tracks de música procesados")
+                if tracks_processed % 50 == 0:  # Reducido la frecuencia de logs
+                    logger.info(f"⏳ Procesados {tracks_processed} tracks válidos, {invalid_tracks} inválidos")
+                    # Guardar progreso parcial
+                    save_partial_progress(playlist['name'], {
+                        "id": playlist['id'],
+                        "duration": convertir_miliseconds(total_duration_ms),
+                        "url": playlist['external_urls']['spotify'],
+                        "image": playlist['images'][0]['url'] if playlist['images'] else None,
+                        "total_tracks": tracks_processed,
+                        "invalid_tracks": invalid_tracks,
+                        "processing_complete": False
+                    })
 
             offset += CONFIG['BATCH_SIZE']
-            time.sleep(CONFIG['REQUEST_DELAY'])
 
-            # Verificar si han pasado más de 30 segundos sin avanzar
-            if time.time() - last_progress_time > 30:
-                logger.warning("⏳ Tiempo de espera excedido, pasando a la siguiente playlist.")
-                break  # Salir del bucle si se excede el tiempo de espera
-
-        # Resumen final
-        duration = convertir_miliseconds(total_duration_ms)
+        # Resultado final
         result = {
             playlist['name']: {
                 "id": playlist['id'],
-                "duration": duration,
+                "duration": convertir_miliseconds(total_duration_ms),
                 "url": playlist['external_urls']['spotify'],
                 "image": playlist['images'][0]['url'] if playlist['images'] else None,
                 "total_tracks": tracks_processed,
-                "podcasts_filtered": podcasts_found
+                "invalid_tracks": invalid_tracks,
+                "processing_complete": True
             }
         }
 
-        # Actualizar el diccionario global con los resultados
         all_results.update(result)
-
-        logger.info(f"✅ Playlist procesada: {playlist['name']}")
+        save_to_results(result)  # Guardar inmediatamente después de procesar cada playlist
+        
+        logger.info(f"✅ Playlist completada: {playlist['name']} - {tracks_processed} tracks válidos, {invalid_tracks} inválidos")
         return result
 
     except Exception as e:
         logger.error(f"❌ Error procesando playlist: {str(e)}")
         return None
+
+def save_partial_progress(playlist_name: str, data: Dict):
+    """
+    Guarda el progreso parcial en un archivo temporal
+    """
+    try:
+        partial_file = f'partial_results_{playlist_name.replace("/", "_")}.json'
+        with open(partial_file, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
+    except Exception as e:
+        logger.error(f"❌ Error guardando progreso parcial: {str(e)}")
 
 # Variables globales
 start_time = None
